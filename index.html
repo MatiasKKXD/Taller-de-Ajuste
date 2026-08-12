@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1b1e21">
+<meta name="description" content="Organizador para el Taller de Ajuste — Cronograma, criterios de acreditación y notas diarias.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Taller de Ajuste">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiVGFsbGVyIGRlIEFqdXN0ZSIsInNob3J0X25hbWUiOiJUQSIsImRlc2NyaXB0aW9uIjoiT3JnYW5pemFkb3IgcGFyYSBlbCBUYWxsZXIgZGUgQWp1c3RlIC0gQ0VUIDI4IiwiYWN0aW9uIjoiLiIsInR5cGUiOiJ3ZWJhcHAiLCJjb2xvcnMiOlt7InNoYWRlIjoiIzFiMWUyMSJ9XSwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcHJpZW50YXRpb24iOiJwb3J0cmFpdC1wcmltYXJ5Iiwic3RhcnRfdXJsIjoiLiIsInByZWZlciIsImRhcmsiLCJzY3JlZW5zaG90cyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWlhKNElIZ3dMekFnTUM0d0xqRXdMak13THpNdVkyOXQiLCJzaXplcyI6IjE5MngxOTIiLCJmb3JtIjoidmFyIn1dfQ==">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232b4c6f' width='192' height='192'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial,sans-serif' font-size='80' font-weight='700' fill='%23f5c518' transform='translate(0, 8)'>TA</text></svg>">
+<title>Taller de Ajuste — Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --graphite:#1b1e21;
+    --panel:#23272b;
+    --blueprint:#2b4c6f;
+    --blueprint-line:#3d6690;
+    --steel:#8a94a0;
+    --paper:#eef1f0;
+    --yellow:#f5c518;
+    --ok:#7fb37a;
+    --danger:#c9695f;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--graphite);
+    background-image:
+      linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+    background-size:28px 28px;
+    background-attachment:fixed;
+    background-color:#191c1e;
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    padding:18px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:760px;margin:0 auto;}
+
+  header{
+    background:var(--blueprint);
+    border:2px solid #4a729c;
+    border-radius:4px;
+    padding:16px 18px;
+    margin-bottom:14px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute;
+    right:-30px;top:-30px;
+    width:120px;height:120px;
+    border:2px solid rgba(255,255,255,0.08);
+    border-radius:50%;
+  }
+  header h1{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    font-size:1.5rem;
+    margin:0 0 4px;
+  }
+  header p{
+    margin:0;
+    color:#cfe0ef;
+    font-size:0.82rem;
+    letter-spacing:0.03em;
+  }
+  .tag{
+    display:inline-block;
+    background:var(--yellow);
+    color:#1b1e21;
+    font-weight:700;
+    font-size:0.68rem;
+    letter-spacing:0.06em;
+    padding:2px 8px;
+    border-radius:2px;
+    margin-top:8px;
+    text-transform:uppercase;
+  }
+
+  section{
+    background:var(--panel);
+    border:1px solid #33383d;
+    border-radius:4px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  section h2{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-size:0.95rem;
+    letter-spacing:0.05em;
+    color:var(--yellow);
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  section h2::before{
+    content:"";
+    width:10px;height:10px;
+    border:2px solid var(--yellow);
+    border-radius:50%;
+    display:inline-block;
+  }
+
+  .countdown-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .cd-card{
+    background:#1b1e21;
+    border:1px dashed var(--steel);
+    border-radius:4px;
+    padding:10px;
+    text-align:center;
+  }
+  .cd-card .n{
+    font-size:1.7rem;
+    font-weight:700;
+    color:var(--yellow);
+    line-height:1;
+  }
+  .cd-card .label{
+    font-size:0.66rem;
+    color:var(--steel);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-top:4px;
+  }
+  .cd-card .date{
+    font-size:0.72rem;
+    color:var(--paper);
+    margin-top:2px;
+  }
+
+  .cal{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+    margin-top:6px;
+  }
+  .cal-label{
+    grid-column:1/-1;
+    font-size:0.7rem;
+    color:var(--steel);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin:10px 0 2px;
+  }
+  .day{
+    aspect-ratio:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.72rem;
+    border-radius:3px;
+    background:#1b1e21;
+    color:#555c62;
+    position:relative;
+    cursor:pointer;
+    transition:transform 0.12s;
+  }
+  .day:hover{transform:scale(1.08);}
+  .day.clase{background:#2d3439;color:var(--paper);border:1px solid #3d6690;}
+  .day.feriado{background:transparent;color:var(--danger);border:1px dashed var(--danger);text-decoration:line-through;cursor:default;}
+  .day.feriado:hover{transform:none;}
+  .day.entrega1{background:var(--yellow);color:#1b1e21;font-weight:700;}
+  .day.entregaf{background:var(--danger);color:#fff;font-weight:700;}
+  .day.has-note::after{
+    content:"";
+    position:absolute;
+    bottom:2px;right:2px;
+    width:5px;height:5px;
+    border-radius:50%;
+    background:var(--yellow);
+  }
+  .day.entrega1.has-note::after,
+  .day.entregaf.has-note::after{
+    background:#1b1e21;
+  }
+
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:50;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--panel);
+    border:1px solid var(--blueprint-line);
+    border-radius:6px;
+    width:100%;
+    max-width:380px;
+    padding:16px;
+  }
+  .modal h3{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    font-size:0.95rem;
+    color:var(--yellow);
+    margin:0 0 10px;
+  }
+  .modal textarea{
+    width:100%;
+    min-height:110px;
+    background:#1b1e21;
+    color:var(--paper);
+    border:1px solid #33383d;
+    border-radius:4px;
+    padding:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    resize:vertical;
+  }
+  .modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:10px;
+  }
+  .modal-actions button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    padding:7px 12px;
+    border-radius:4px;
+    border:1px solid #33383d;
+    background:#1b1e21;
+    color:var(--paper);
+    cursor:pointer;
+  }
+  .modal-actions button.save{background:var(--yellow);color:#1b1e21;border-color:var(--yellow);font-weight:700;}
+  .modal-actions button.close{color:var(--steel);}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:0.65rem;color:var(--steel);}
+  .legend span{display:inline-flex;align-items:center;gap:4px;}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  ul.checklist{list-style:none;margin:0;padding:0;}
+  ul.checklist li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid #2e3338;
+    font-size:0.82rem;
+  }
+  ul.checklist li:last-child{border-bottom:none;}
+  ul.checklist input{
+    margin-top:2px;
+    width:16px;height:16px;
+    accent-color:var(--yellow);
+    flex-shrink:0;
+  }
+  ul.checklist li.done label{color:var(--ok);text-decoration:line-through;opacity:0.7;}
+
+  .rules{font-size:0.8rem;line-height:1.6;}
+  .rules li{margin-bottom:6px;}
+  .rules b{color:var(--yellow);}
+
+  .progress-bar{
+    height:8px;
+    background:#1b1e21;
+    border-radius:4px;
+    overflow:hidden;
+    margin-top:8px;
+    border:1px solid #33383d;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--ok);
+    width:0%;
+    transition:width 0.3s;
+  }
+  .progress-text{font-size:0.68rem;color:var(--steel);margin-top:4px;}
+
+  footer{
+    text-align:center;
+    font-size:0.65rem;
+    color:#4a5157;
+    margin-top:16px;
+    padding-bottom:10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Taller de Ajuste</h1>
+    <p>Matías Mermol · CET 28 · Prof. Quilaleo "Carrita"</p>
+    <span class="tag">2do año · Curso 2° 3°</span>
+  </header>
+
+  <section>
+    <h2>Próximas fechas clave</h2>
+    <div class="countdown-grid">
+      <div class="cd-card">
+        <div class="n" id="cd1">–</div>
+        <div class="label">Días para 1° entrega</div>
+        <div class="date">Vie 11 sept</div>
+      </div>
+      <div class="cd-card">
+        <div class="n" id="cd2">–</div>
+        <div class="label">Días para entrega final</div>
+        <div class="date">Mié 23 sept</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cronograma de clases</h2>
+    <div class="cal-label">Agosto 2026</div>
+    <div class="cal" id="cal-ago"></div>
+    <div class="cal-label">Septiembre 2026</div>
+    <div class="cal" id="cal-sep"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:#2d3439;border:1px solid #3d6690"></i>Día de clase</span>
+      <span><i class="dot" style="background:transparent;border:1px dashed #c9695f"></i>Feriado (17 ago)</span>
+      <span><i class="dot" style="background:#f5c518"></i>1° entrega (11 sept)</span>
+      <span><i class="dot" style="background:#c9695f"></i>Entrega final (23 sept)</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Asistencia</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+      <div style="background:#1b1e21;border:1px dashed #3d6690;border-radius:4px;padding:12px;text-align:center;">
+        <div style="font-size:2rem;font-weight:700;color:#f5c518;line-height:1;" id="falta-count">0</div>
+        <div style="font-size:0.7rem;color:#8a94a0;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;">Faltas</div>
+      </div>
+      <div style="background:#1b1e21;border:1px dashed #7fb37a;border-radius:4px;padding:12px;text-align:center;">
+        <div style="font-size:2rem;font-weight:700;color:#7fb37a;line-height:1;" id="asist-pct">–</div>
+        <div style="font-size:0.7rem;color:#8a94a0;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;">Asistencia</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">
+      <button id="btn-falta-menos" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;padding:8px 16px;background:#c9695f;color:#fff;border:none;border-radius:4px;cursor:pointer;">− Falta</button>
+      <button id="btn-falta-mas" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;padding:8px 16px;background:#7fb37a;color:#fff;border:none;border-radius:4px;cursor:pointer;">+ Falta</button>
+    </div>
+  </section>
+
+  <section>
+    <ul class="checklist" id="checklist-acred"></ul>
+    <div class="progress-bar"><div class="progress-fill" id="pf-acred"></div></div>
+    <div class="progress-text" id="pt-acred"></div>
+  </section>
+
+  <section>
+    <h2>Qué llevar a la 1° entrega y entrega final</h2>
+    <ul class="checklist" id="checklist-entrega"></ul>
+    <div class="progress-bar"><div class="progress-fill" id="pf-entrega"></div></div>
+    <div class="progress-text" id="pt-entrega"></div>
+  </section>
+
+  <section>
+    <h2>Reglas del taller</h2>
+    <ul class="rules">
+      <li><b>Horario:</b> ingreso 13:10 con mameluco puesto, salida 16:30.</li>
+      <li><b>Celular:</b> se deposita en la caja recolectora al empezar; se retira al salir.</li>
+      <li><b>Sin accesorios:</b> anillos, pulseras, aros, colgantes ni ropa suelta. Pelo largo, atado.</li>
+      <li><b>Formato A3</b> para los trabajos prácticos, letra imprenta mayúscula, prolija y legible.</li>
+      <li>Al final de cada clase: informe técnico diario (procedimientos, herramientas, velocidades y partes usadas).</li>
+      <li>Antes de fabricar cada pieza: hacer el croquis correspondiente.</li>
+    </ul>
+  </section>
+
+  <footer>Guardado automáticamente en este dispositivo · CET 28</footer>
+</div>
+
+<div class="modal-overlay" id="note-overlay">
+  <div class="modal">
+    <h3 id="note-title">Nota</h3>
+    <textarea id="note-text" placeholder="Escribí algo sobre este día: qué tocó, tarea, recordatorio..."></textarea>
+    <div class="modal-actions">
+      <button class="close" id="note-close">Cerrar</button>
+      <button class="save" id="note-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Registrar el service worker para modo offline
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('data:application/javascript;base64,KGZ1bmN0aW9uKCl7Y29uc3Qgc3cgPSBzZWxmOyBjb25zdCBDQUNIRV9OQU1FID0gJ3RhLWNhY2hlLXYxJzsgc3cub25pbnN0YWxsID0gKGUpPT57ZS53YWl0VW50aWwoKSA9PiBzdy5jYWNoZXMub3BlbihDQUNIRV9OQU1FKS50aGVuKGMgPT4gYy5hZGRBbGwoWycuJ10pKSk7fTsgc3cub25hY3RpdmF0ZSA9IChlKT0+e2Uud2FpdFVudGlsKHN3LmNsaWVudHMuY2xhaW0oKSk7fTsgc3cub25mZXRjaCA9IChlKT0+e2lmKGUucmVxdWVzdC5tZXRob2QgIT09ICdHRVQnKXJldHVybjsgZS5yZXNwb25kV2l0aChzdy5jYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKHIgPT4gciB8fCBmZXRjaChlfcmVxdWVzdCkudGhlbihyZXMgPT4gc3cuY2FjaGVzLm9wZW4oQ0FDSEVfTkFNRSkudGhlbihjID0+IHsuYWRkKGUucmVxdWVzdCwgcmVzLmNsb25lKCkpO3JldHVybiByZXM7fSkpLmNhdGNoKCgpID0+IG5ldyBSZXNwb25zZSgnT2ZmbGluZScsIHtzdGF0dXM6NjAwfSkpKSk7fX0pKCk=', {scope: '.'}).catch(e => console.log('SW error:', e));
+}
+
+const ACRED_ITEMS = [
+  "Asistencia al 75%",
+  "Cuaderno de taller completo (con apuntes)",
+  "Trabajos prácticos aprobados (torno y manual)",
+  "Planos de trabajos prácticos",
+  "Informes completos incluidos en el cuaderno"
+];
+
+const ENTREGA_ITEMS = [
+  "Carpeta",
+  "Plano",
+  "Informes"
+];
+
+const CLASS_DAYS_AGO = [3,5,10,12,14,17,19,24,26,28,31];
+const FERIADO_AGO = 17;
+const CLASS_DAYS_SEP = [2,7,9,11,14,16,21,23,25,28,30];
+const ENTREGA1_SEP = 11;
+const ENTREGAF_SEP = 23;
+
+const MONTH_NAMES = {ago:"agosto", sep:"septiembre"};
+
+function buildCalendar(elId, monthKey, daysInMonth, classDays, feriado, entrega1, entregaf){
+  const el = document.getElementById(elId);
+  el.innerHTML = "";
+  for(let d=1; d<=daysInMonth; d++){
+    const div = document.createElement("div");
+    div.className = "day";
+    div.textContent = d;
+    div.dataset.month = monthKey;
+    div.dataset.day = d;
+    if(d === feriado) div.classList.add("feriado");
+    else{
+      if(d === entrega1) div.classList.add("entrega1");
+      else if(d === entregaf) div.classList.add("entregaf");
+      else if(classDays.includes(d)) div.classList.add("clase");
+      div.addEventListener("click", () => openNote(monthKey, d));
+    }
+    el.appendChild(div);
+  }
+}
+buildCalendar("cal-ago", "ago", 31, CLASS_DAYS_AGO, FERIADO_AGO, null, null);
+buildCalendar("cal-sep", "sep", 30, CLASS_DAYS_SEP, null, ENTREGA1_SEP, ENTREGAF_SEP);
+
+// Total de clases (sin contar el feriado)
+const TOTAL_CLASES = CLASS_DAYS_AGO.filter(d => d !== FERIADO_AGO).length + CLASS_DAYS_SEP.length;
+
+function daysUntil(month, day){
+  const today = new Date(2026, 7, 11); // 11 ago 2026
+  const target = new Date(2026, month, day);
+  const diff = Math.round((target - today) / 86400000);
+  return diff;
+}
+document.getElementById("cd1").textContent = daysUntil(8, 11);
+document.getElementById("cd2").textContent = daysUntil(8, 23);
+
+// ---- Capa de almacenamiento con respaldo ----
+// Si window.storage no está disponible o falla, usa memoria de la sesión
+// para que la app nunca tire error y las notas/checklists sigan funcionando.
+const memStore = {};
+
+async function storageGet(key, shared=false){
+  if(window.storage && typeof window.storage.get === "function"){
+    try{ return await window.storage.get(key, shared); }
+    catch(e){ /* clave inexistente o API no disponible */ }
+  }
+  return (key in memStore) ? { key, value: memStore[key], shared } : null;
+}
+async function storageSet(key, value, shared=false){
+  if(window.storage && typeof window.storage.set === "function"){
+    try{ return await window.storage.set(key, value, shared); }
+    catch(e){ /* seguimos con el respaldo en memoria */ }
+  }
+  memStore[key] = value;
+  return { key, value, shared };
+}
+async function storageDelete(key, shared=false){
+  if(window.storage && typeof window.storage.delete === "function"){
+    try{ return await window.storage.delete(key, shared); }
+    catch(e){ /* seguimos con el respaldo en memoria */ }
+  }
+  delete memStore[key];
+  return { key, deleted:true, shared };
+}
+async function storageList(prefix, shared=false){
+  if(window.storage && typeof window.storage.list === "function"){
+    try{ return await window.storage.list(prefix, shared); }
+    catch(e){ /* seguimos con el respaldo en memoria */ }
+  }
+  const keys = Object.keys(memStore).filter(k => !prefix || k.startsWith(prefix));
+  return { keys, prefix, shared };
+}
+
+async function loadState(key, fallbackLength){
+  try{
+    const res = await storageGet(key, false);
+    if(res && res.value) return JSON.parse(res.value);
+  }catch(e){ /* no guardado aún */ }
+  return new Array(fallbackLength).fill(false);
+}
+async function saveState(key, arr){
+  try{ await storageSet(key, JSON.stringify(arr), false); }
+  catch(e){ console.error("No se pudo guardar", e); }
+}
+
+function renderChecklist(ulId, items, state, key, progFillId, progTextId){
+  const ul = document.getElementById(ulId);
+  ul.innerHTML = "";
+  items.forEach((text, i) => {
+    const li = document.createElement("li");
+    if(state[i]) li.classList.add("done");
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = state[i];
+    cb.id = ulId + "-" + i;
+    cb.addEventListener("change", () => {
+      state[i] = cb.checked;
+      li.classList.toggle("done", cb.checked);
+      updateProgress(items, state, progFillId, progTextId);
+      saveState(key, state);
+    });
+    const label = document.createElement("label");
+    label.htmlFor = cb.id;
+    label.textContent = text;
+    li.appendChild(cb);
+    li.appendChild(label);
+    ul.appendChild(li);
+  });
+  updateProgress(items, state, progFillId, progTextId);
+}
+
+function updateProgress(items, state, fillId, textId){
+  const done = state.filter(Boolean).length;
+  const pct = Math.round((done/items.length)*100);
+  document.getElementById(fillId).style.width = pct + "%";
+  document.getElementById(textId).textContent = `${done}/${items.length} completado`;
+}
+
+(async () => {
+  const acredState = await loadState("acred-checklist", ACRED_ITEMS.length);
+  renderChecklist("checklist-acred", ACRED_ITEMS, acredState, "acred-checklist", "pf-acred", "pt-acred");
+
+  const entregaState = await loadState("entrega-checklist", ENTREGA_ITEMS.length);
+  renderChecklist("checklist-entrega", ENTREGA_ITEMS, entregaState, "entrega-checklist", "pf-entrega", "pt-entrega");
+
+  await markDaysWithNotes();
+
+  // Inicializar contador de faltas
+  await initFaltasCounter();
+})();
+
+// ---- Contador de faltas ----
+let faltasCount = 0;
+
+async function initFaltasCounter(){
+  try{
+    const res = await storageGet("faltas-count", false);
+    faltasCount = res && res.value ? parseInt(res.value) : 0;
+  }catch(e){ faltasCount = 0; }
+  updateFaltasDisplay();
+
+  document.getElementById("btn-falta-mas").addEventListener("click", async () => {
+    faltasCount++;
+    await storageSet("faltas-count", String(faltasCount), false);
+    updateFaltasDisplay();
+  });
+
+  document.getElementById("btn-falta-menos").addEventListener("click", async () => {
+    if(faltasCount > 0) faltasCount--;
+    await storageSet("faltas-count", String(faltasCount), false);
+    updateFaltasDisplay();
+  });
+}
+
+function updateFaltasDisplay(){
+  document.getElementById("falta-count").textContent = faltasCount;
+  const asistencia = Math.round(((TOTAL_CLASES - faltasCount) / TOTAL_CLASES) * 100);
+  document.getElementById("asist-pct").textContent = asistencia + "%";
+}
+
+// ---- Notas por día ----
+const overlay = document.getElementById("note-overlay");
+const noteTitle = document.getElementById("note-title");
+const noteText = document.getElementById("note-text");
+const noteSaveBtn = document.getElementById("note-save");
+const noteCloseBtn = document.getElementById("note-close");
+let currentNoteKey = null;
+
+function noteKey(monthKey, day){ return `note-${monthKey}-${day}`; }
+
+async function openNote(monthKey, day){
+  currentNoteKey = noteKey(monthKey, day);
+  noteTitle.textContent = `${day} de ${MONTH_NAMES[monthKey]}`;
+  noteText.value = "";
+  try{
+    const res = await storageGet(currentNoteKey, false);
+    if(res && res.value) noteText.value = res.value;
+  }catch(e){ /* sin nota guardada aún */ }
+  overlay.classList.add("open");
+  noteText.focus();
+}
+
+function closeNote(){
+  overlay.classList.remove("open");
+  currentNoteKey = null;
+}
+
+noteCloseBtn.addEventListener("click", closeNote);
+overlay.addEventListener("click", (e) => { if(e.target === overlay) closeNote(); });
+
+noteSaveBtn.addEventListener("click", async () => {
+  if(!currentNoteKey) return;
+  const text = noteText.value.trim();
+  let ok = true;
+  try{
+    if(text){
+      await storageSet(currentNoteKey, text, false);
+    }else{
+      await storageDelete(currentNoteKey, false);
+    }
+  }catch(e){
+    ok = false;
+    console.error("No se pudo guardar la nota", e);
+  }
+  const [_, monthKey, day] = currentNoteKey.split("-");
+  updateDayIndicator(monthKey, day, !!text);
+  closeNote();
+  if(!ok) alert("No se pudo guardar la nota. Probá de nuevo.");
+});
+
+function updateDayIndicator(monthKey, day, hasNote){
+  const el = document.querySelector(`.day[data-month="${monthKey}"][data-day="${day}"]`);
+  if(el) el.classList.toggle("has-note", hasNote);
+}
+
+async function markDaysWithNotes(){
+  try{
+    const res = await storageList("note-", false);
+    if(res && res.keys){
+      res.keys.forEach(k => {
+        const parts = k.replace("note-","").split("-");
+        const monthKey = parts[0], day = parts[1];
+        updateDayIndicator(monthKey, day, true);
+      });
+    }
+  }catch(e){ /* sin notas todavía */ }
+}
+
+// PWA: mostrar aviso de instalación si es posible
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('App lista para instalar');
+});
+</script>
+</body>
+  </html>
